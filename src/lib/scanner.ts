@@ -73,11 +73,13 @@ export async function scanWebsite(url: string) {
 
         console.log(`▶️ Navigating to ${cleanUrl}...`);
 
-        // Navigation Strategy: Network Idle is best, but with a safe timeout
+        // Navigation Strategy: fast timeout for Vercel's 60s limit
         try {
-            await page.goto(cleanUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+            await page.goto(cleanUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+            // Wait a bit more for dynamic content
+            await new Promise(r => setTimeout(r, 2000));
         } catch (e) {
-            console.warn("⚠️ Page load timeout (30s) or partial load. Proceeding with analysis...");
+            console.warn("⚠️ Page load timeout. Proceeding with analysis...");
         }
 
         // --- ENHANCED CLEANUP & PREP ---
@@ -95,34 +97,21 @@ export async function scanWebsite(url: string) {
             document.body.style.overflow = 'hidden';
         });
 
-        // Auto-scroll to trigger lazy loading
-        await page.evaluate(async () => {
-            await new Promise<void>((resolve) => {
-                let totalHeight = 0;
-                const distance = 100;
-                const timer = setInterval(() => {
-                    const scrollHeight = document.body.scrollHeight;
-                    window.scrollBy(0, distance);
-                    totalHeight += distance;
-                    if (totalHeight >= scrollHeight) {
-                        clearInterval(timer);
-                        resolve();
-                    }
-                }, 20); // Faster scroll
-            });
+        // Quick scroll to trigger lazy loading (fast version)
+        await page.evaluate(() => {
+            window.scrollTo(0, document.body.scrollHeight / 2);
+        });
+        await new Promise(r => setTimeout(r, 300));
+        await page.evaluate(() => {
             window.scrollTo(0, 0);
         });
-
-        // Specific wait for stabilization
-        await new Promise(r => setTimeout(r, 1000));
 
         // Capture Content
         const html = await page.content();
 
         const screenshot = await page.screenshot({
             type: 'png',
-            fullPage: true,
-            captureBeyondViewport: true,
+            fullPage: false,
             encoding: 'binary'
         });
 
