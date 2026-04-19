@@ -2,8 +2,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { AnalysisResult } from "@/types";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-// Using the fastest stable model
-const MODEL_NAME = "gemini-2.0-flash";
+// User specified model
+const MODEL_NAME = "gemini-3-flash-preview";
 
 export async function analyzeUX(imageBuffer: Buffer, htmlContent: string, technicalContext: any = {}): Promise<AnalysisResult> {
   const model = genAI.getGenerativeModel({
