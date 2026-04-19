@@ -48,11 +48,11 @@ export async function scanWebsite(url: string) {
 
         const page = await browser.newPage();
 
-        // Optimize: Block unnecessary resources
+        // Optimize: Block only super heavy media, keep styles and images for UX review
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             const resourceType = req.resourceType();
-            if (['image', 'stylesheet', 'font', 'media', 'other'].includes(resourceType)) {
+            if (['media'].includes(resourceType)) {
                 req.abort();
             } else {
                 req.continue();
