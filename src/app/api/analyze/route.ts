@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { scanWebsite } from '@/lib/scanner';
 import { analyzeUX } from '@/lib/gemini';
 
+// Vercel serverless function config
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
     try {
         const { url } = await req.json();
