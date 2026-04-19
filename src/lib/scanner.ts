@@ -1,5 +1,8 @@
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
+
+// Chromium binary URL matching the installed @sparticuz/chromium-min version
+const CHROMIUM_PACK_URL = 'https://github.com/Sparticuz/chromium/releases/download/v147.0.1/chromium-v147.0.1-pack.x64.tar';
 
 export async function scanWebsite(url: string) {
     const cleanUrl = url.startsWith('http') ? url : `https://${url}`;
@@ -14,8 +17,8 @@ export async function scanWebsite(url: string) {
         let executablePath: string | undefined;
 
         if (isVercel) {
-            // Vercel/Serverless: Use @sparticuz/chromium
-            executablePath = await chromium.executablePath();
+            // Vercel/Serverless: Download chromium binary from GitHub releases
+            executablePath = await chromium.executablePath(CHROMIUM_PACK_URL);
         } else {
             // Local development: Use installed Chrome
             const fs = require('fs');
@@ -114,7 +117,7 @@ export async function scanWebsite(url: string) {
         await new Promise(r => setTimeout(r, 1000));
 
         // Capture Content
-        const html = await page.content(); // cleaner than evaluate
+        const html = await page.content();
 
         const screenshot = await page.screenshot({
             type: 'png',
