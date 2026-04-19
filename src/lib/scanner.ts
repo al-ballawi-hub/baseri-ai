@@ -73,11 +73,11 @@ export async function scanWebsite(url: string) {
 
         console.log(`▶️ Navigating to ${cleanUrl}...`);
 
-        // Navigation Strategy: fast timeout for Vercel's 60s limit
+        // Navigation Strategy: Max speed
         try {
-            await page.goto(cleanUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-            // Wait a bit more for dynamic content
-            await new Promise(r => setTimeout(r, 2000));
+            await page.goto(cleanUrl, { waitUntil: 'domcontentloaded', timeout: 8000 });
+            // minimal wait for js
+            await new Promise(r => setTimeout(r, 500));
         } catch (e) {
             console.warn("⚠️ Page load timeout. Proceeding with analysis...");
         }
