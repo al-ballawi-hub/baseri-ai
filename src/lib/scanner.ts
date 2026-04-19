@@ -52,7 +52,7 @@ export async function scanWebsite(url: string) {
         await page.setRequestInterception(true);
         page.on('request', (req) => {
             const resourceType = req.resourceType();
-            if (['font', 'media'].includes(resourceType)) {
+            if (['image', 'stylesheet', 'font', 'media', 'other'].includes(resourceType)) {
                 req.abort();
             } else {
                 req.continue();

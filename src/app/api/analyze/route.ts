@@ -3,7 +3,7 @@ import { scanWebsite } from '@/lib/scanner';
 import { analyzeUX } from '@/lib/gemini';
 
 // Vercel serverless function config
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {
     try {
